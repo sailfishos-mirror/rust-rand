@@ -80,5 +80,5 @@ zerocopy = { version = "0.8.0", default-features = false, features = ["simd"] }
 [dev-dependencies]
 rand_pcg = { path = "rand_pcg", version = "0.9.0" }
 # Only to test serde
-bincode = "1.2.1"
+bincode = "2.0.1"
 rayon = "1.7"
