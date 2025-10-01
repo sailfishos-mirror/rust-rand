@@ -61,7 +61,7 @@ jobs:
           cd rand_core
           cp Cargo.lock.msrv Cargo.lock
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@1.63.0
+        uses: dtolnay/rust-toolchain@1.100.0
       - name: Test rand_core
         working-directory: ./rand_core
         run: |
