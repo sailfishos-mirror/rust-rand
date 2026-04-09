@@ -102,6 +102,11 @@ use crate::distr::{Distribution, StandardUniform};
 /// # let _ = rand::Rng::next_u32(&mut rng);
 /// ```
 ///
+/// # Panics
+///
+/// If [`SysRng`] fails to obtain entropy from the OS. This is unlikely
+/// outside of early boot or unusual system conditions.
+///
 /// # Security
 ///
 /// Refer to [`ThreadRng#Security`].
@@ -110,6 +115,7 @@ use crate::distr::{Distribution, StandardUniform};
 /// [`ThreadRng`]: crate::rngs::ThreadRng
 /// [`ThreadRng#Security`]: crate::rngs::ThreadRng#security
 #[cfg(feature = "sys_rng")]
+#[track_caller]
 pub fn make_rng<R: SeedableRng>() -> R {
     #[cfg(feature = "thread_rng")]
     {
