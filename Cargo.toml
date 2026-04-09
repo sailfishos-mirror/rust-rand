@@ -54,6 +54,10 @@ small_rng = []
 # using min-const-generics
 min_const_gen = []
 
+# Option: enabled logging.  This is deprecated; Rand no longer logs
+# anything.
+log = []
+
 [workspace]
 members = [
     "rand_core",
@@ -64,7 +68,6 @@ members = [
 
 [dependencies]
 rand_core = { path = "rand_core", version = "0.6.0" }
-log = { version = "0.4.4", optional = true }
 serde = { version = "1.0.103", features = ["derive"], optional = true }
 rand_chacha = { path = "rand_chacha", version = "0.3.0", default-features = false, optional = true }
 
