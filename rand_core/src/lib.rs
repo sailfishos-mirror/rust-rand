@@ -288,6 +288,9 @@ pub trait SeedableRng: Sized {
     ///         MyRng(seed)
     ///     }
     /// }
+    ///
+    /// # let rng = MyRng::from_seed(Default::default());
+    /// # let _ = rng.0;
     /// ```
     type Seed: Sized + Default + AsMut<[u8]>;
 
