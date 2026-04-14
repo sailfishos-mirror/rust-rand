@@ -31,7 +31,7 @@ use alloc::{boxed::Box, vec, vec::Vec};
 /// let samples = dirichlet.sample(&mut rand::thread_rng());
 /// println!("{:?} is from a Dirichlet([1.0, 2.0, 3.0]) distribution", samples);
 /// ```
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub struct Dirichlet<F>
@@ -46,7 +46,7 @@ where
 }
 
 /// Error type returned from `Dirchlet::new`.
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
     /// `alpha.len() < 2`.
@@ -69,7 +69,7 @@ impl fmt::Display for Error {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for Error {}
 
 impl<F> Dirichlet<F>

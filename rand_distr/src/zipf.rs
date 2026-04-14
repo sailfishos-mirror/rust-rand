@@ -70,7 +70,7 @@ impl fmt::Display for ZetaError {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for ZetaError {}
 
 impl<F> Zeta<F>
@@ -170,7 +170,7 @@ impl fmt::Display for ZipfError {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for ZipfError {}
 
 impl<F> Zipf<F>

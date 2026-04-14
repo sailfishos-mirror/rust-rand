@@ -113,7 +113,7 @@ pub mod uniform;
     note = "use rand::distributions::{WeightedIndex, WeightedError} instead"
 )]
 #[cfg(feature = "alloc")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 pub mod weighted;
 
 pub use self::bernoulli::{Bernoulli, BernoulliError};

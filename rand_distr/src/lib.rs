@@ -20,7 +20,7 @@
 )]
 #![allow(clippy::neg_cmp_op_on_partial_ord)] // suggested fix too verbose
 #![no_std]
-#![cfg_attr(doc_cfg, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 //! Generating random samples from probability distributions.
 //!
@@ -99,7 +99,7 @@ pub use rand::distributions::{
 pub use self::binomial::{Binomial, Error as BinomialError};
 pub use self::cauchy::{Cauchy, Error as CauchyError};
 #[cfg(feature = "alloc")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 pub use self::dirichlet::{Dirichlet, Error as DirichletError};
 pub use self::exponential::{Error as ExpError, Exp, Exp1};
 pub use self::frechet::{Error as FrechetError, Frechet};
@@ -127,10 +127,10 @@ pub use self::unit_sphere::UnitSphere;
 pub use self::weibull::{Error as WeibullError, Weibull};
 pub use self::zipf::{Zeta, ZetaError, Zipf, ZipfError};
 #[cfg(feature = "alloc")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 pub use rand::distributions::{WeightedError, WeightedIndex};
 #[cfg(feature = "alloc")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 pub use weighted_alias::WeightedAliasIndex;
 
 pub use num_traits;
@@ -183,7 +183,7 @@ mod test {
 }
 
 #[cfg(feature = "alloc")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "alloc")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
 pub mod weighted_alias;
 
 mod binomial;

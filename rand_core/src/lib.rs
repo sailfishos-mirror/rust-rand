@@ -35,7 +35,7 @@
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
-#![cfg_attr(doc_cfg, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
 
 use core::convert::AsMut;
@@ -408,7 +408,7 @@ pub trait SeedableRng: Sized {
     ///
     /// [`getrandom`]: https://docs.rs/getrandom
     #[cfg(feature = "getrandom")]
-    #[cfg_attr(doc_cfg, doc(cfg(feature = "getrandom")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "getrandom")))]
     fn from_entropy() -> Self {
         let mut seed = Self::Seed::default();
         if let Err(err) = getrandom::getrandom(seed.as_mut()) {

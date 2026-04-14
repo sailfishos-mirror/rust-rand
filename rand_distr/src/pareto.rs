@@ -51,7 +51,7 @@ impl fmt::Display for Error {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for Error {}
 
 impl<F> Pareto<F>
