@@ -112,7 +112,7 @@ pub trait SliceRandom {
     /// ```
     #[cfg(feature = "alloc")]
     #[cfg_attr(docsrs, doc(cfg(feature = "alloc")))]
-    fn choose_multiple<R>(&self, rng: &mut R, amount: usize) -> SliceChooseIter<Self, Self::Item>
+    fn choose_multiple<R>(&self, rng: &mut R, amount: usize) -> SliceChooseIter<'_, Self, Self::Item>
     where R: Rng + ?Sized;
 
     /// Similar to [`choose`], but where the likelihood of each outcome may be
@@ -219,7 +219,7 @@ pub trait SliceRandom {
     #[cfg_attr(docsrs, doc(cfg(feature = "std")))]
     fn choose_multiple_weighted<R, F, X>(
         &self, rng: &mut R, amount: usize, weight: F,
-    ) -> Result<SliceChooseIter<Self, Self::Item>, WeightedError>
+    ) -> Result<SliceChooseIter<'_, Self, Self::Item>, WeightedError>
     where
         R: Rng + ?Sized,
         F: Fn(&Self::Item) -> X,
@@ -512,7 +512,7 @@ impl<T> SliceRandom for [T] {
     }
 
     #[cfg(feature = "alloc")]
-    fn choose_multiple<R>(&self, rng: &mut R, amount: usize) -> SliceChooseIter<Self, Self::Item>
+    fn choose_multiple<R>(&self, rng: &mut R, amount: usize) -> SliceChooseIter<'_, Self, Self::Item>
     where R: Rng + ?Sized {
         let amount = ::core::cmp::min(amount, self.len());
         SliceChooseIter {
@@ -563,7 +563,7 @@ impl<T> SliceRandom for [T] {
     #[cfg(feature = "std")]
     fn choose_multiple_weighted<R, F, X>(
         &self, rng: &mut R, amount: usize, weight: F,
-    ) -> Result<SliceChooseIter<Self, Self::Item>, WeightedError>
+    ) -> Result<SliceChooseIter<'_, Self, Self::Item>, WeightedError>
     where
         R: Rng + ?Sized,
         F: Fn(&Self::Item) -> X,
