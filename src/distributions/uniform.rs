@@ -1444,7 +1444,6 @@ mod tests {
     #[cfg(all(
         feature = "std",
         not(target_arch = "wasm32"),
-        not(target_arch = "asmjs")
     ))]
     fn test_float_assertions() {
         use super::SampleUniform;
