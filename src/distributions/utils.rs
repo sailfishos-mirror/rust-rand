@@ -233,6 +233,7 @@ pub(crate) trait FloatSIMDUtils {
 
 /// Implement functions available in std builds but missing from core primitives
 #[cfg(not(feature = "std"))]
+#[allow(unused)]
 // False positive: We are following `std` here.
 #[allow(clippy::wrong_self_convention)]
 pub(crate) trait Float: Sized {
@@ -242,6 +243,7 @@ pub(crate) trait Float: Sized {
 }
 
 /// Implement functions on f32/f64 to give them APIs similar to SIMD types
+#[allow(unused)]
 pub(crate) trait FloatAsSIMD: Sized {
     #[inline(always)]
     fn lanes() -> usize {
@@ -263,6 +265,7 @@ pub(crate) trait FloatAsSIMD: Sized {
     }
 }
 
+#[allow(unused)]
 pub(crate) trait BoolAsSIMD: Sized {
     fn any(self) -> bool;
     fn all(self) -> bool;
