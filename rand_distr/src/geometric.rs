@@ -52,7 +52,7 @@ impl fmt::Display for Error {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for Error {}
 
 impl Geometric {
@@ -143,7 +143,7 @@ impl Distribution<u64> for Geometric
 /// 
 /// See [`Geometric`](crate::Geometric) for the general geometric distribution.
 /// 
-/// Implemented via iterated [Rng::gen::<u64>().leading_zeros()].
+/// Implemented via iterated `Rng::gen::<u64>().leading_zeros()`.
 /// 
 /// # Example
 /// ```

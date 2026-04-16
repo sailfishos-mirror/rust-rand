@@ -62,7 +62,7 @@ impl fmt::Display for TriangularError {
 }
 
 #[cfg(feature = "std")]
-#[cfg_attr(doc_cfg, doc(cfg(feature = "std")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "std")))]
 impl std::error::Error for TriangularError {}
 
 impl<F> Triangular<F>
