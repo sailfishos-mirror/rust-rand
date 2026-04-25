@@ -260,6 +260,23 @@ impl<X: SampleUniform> Distribution<X> for Uniform<X> {
     }
 }
 
+impl<X: SampleUniform> Uniform<X>
+where
+    X::Sampler: UniformSamplerRange,
+{
+    /// The minimum possible sample value
+    #[inline]
+    pub fn min(&self) -> X {
+        self.0.min()
+    }
+
+    /// The maximum possible sample value
+    #[inline]
+    pub fn max(&self) -> X {
+        self.0.max()
+    }
+}
+
 /// Helper trait for creating objects using the correct implementation of
 /// [`UniformSampler`] for the sampling type.
 ///
@@ -369,6 +386,15 @@ pub trait UniformSampler: Sized {
         let uniform: Self = UniformSampler::new_inclusive(low, high)?;
         Ok(uniform.sample(rng))
     }
+}
+
+/// Extension trait providing min/max sampling range
+pub trait UniformSamplerRange: UniformSampler {
+    /// The minimum possible sample value
+    fn min(&self) -> Self::X;
+
+    /// The maximum possible sample value
+    fn max(&self) -> Self::X;
 }
 
 impl<X: SampleUniform> TryFrom<Range<X>> for Uniform<X> {
