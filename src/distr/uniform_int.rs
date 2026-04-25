@@ -9,7 +9,7 @@
 
 //! `UniformInt` implementation
 
-use super::{Error, SampleBorrow, SampleUniform, UniformSampler};
+use super::{Error, SampleBorrow, SampleUniform, UniformSampler, UniformSamplerRange};
 use crate::distr::utils::WideningMultiply;
 #[cfg(feature = "simd_support")]
 use crate::distr::{Distribution, StandardUniform};
@@ -255,6 +255,18 @@ macro_rules! uniform_int_impl {
                 Ok(low.wrapping_add(result as $ty))
             }
         }
+
+        impl UniformSamplerRange for UniformInt<$ty> {
+            #[inline]
+            fn min(&self) -> $ty {
+                self.low
+            }
+
+            #[inline]
+            fn max(&self) -> $ty {
+                self.low.wrapping_add(self.range.wrapping_sub(1))
+            }
+        }
     };
 }
 
@@ -370,6 +382,23 @@ macro_rules! uniform_simd_int_impl {
                     // Replace only the failing lanes
                     v = mask.select(v, rng.random());
                 }
+            }
+        }
+
+        impl<const LANES: usize> UniformSamplerRange for UniformInt<Simd<$ty, LANES>>
+        where
+            Simd<$unsigned, LANES>:
+                WideningMultiply<Output = (Simd<$unsigned, LANES>, Simd<$unsigned, LANES>)>,
+            StandardUniform: Distribution<Simd<$unsigned, LANES>>,
+        {
+            #[inline]
+            fn min(&self) -> Self::X {
+                self.low
+            }
+
+            #[inline]
+            fn max(&self) -> Self::X {
+                self.low + self.range - Simd::splat(1)
             }
         }
     };
@@ -580,6 +609,18 @@ impl UniformSampler for UniformUsize {
     }
 }
 
+impl UniformSamplerRange for UniformUsize {
+    #[inline]
+    fn min(&self) -> usize {
+        self.low
+    }
+
+    #[inline]
+    fn max(&self) -> usize {
+        self.low.wrapping_add(self.range.wrapping_sub(1))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -596,6 +637,8 @@ mod tests {
     fn test_uniform_good_limits_equal_int() {
         let mut rng = crate::test::rng(804);
         let dist = Uniform::new_inclusive(10, 10).unwrap();
+        assert_eq!(dist.min(), 10);
+        assert_eq!(dist.max(), 10);
         for _ in 0..20 {
             assert_eq!(rng.sample(dist), 10);
         }
@@ -614,24 +657,36 @@ mod tests {
             ($ty:ident, $v:expr, $le:expr, $lt:expr) => {{
                 for &(low, high) in $v.iter() {
                     let my_uniform = Uniform::new(low, high).unwrap();
+                    assert_eq!(my_uniform.min(), low);
+                    // assert_eq!(my_uniform.max(), high - 1);
+
                     for _ in 0..1000 {
                         let v: $ty = rng.sample(my_uniform);
                         assert!($le(low, v) && $lt(v, high));
                     }
 
                     let my_uniform = Uniform::new_inclusive(low, high).unwrap();
+                    assert_eq!(my_uniform.min(), low);
+                    assert_eq!(my_uniform.max(), high);
+
                     for _ in 0..1000 {
                         let v: $ty = rng.sample(my_uniform);
                         assert!($le(low, v) && $le(v, high));
                     }
 
                     let my_uniform = Uniform::new(&low, high).unwrap();
+                    assert_eq!(my_uniform.min(), low);
+                    // assert_eq!(my_uniform.max(), high - 1);
+
                     for _ in 0..1000 {
                         let v: $ty = rng.sample(my_uniform);
                         assert!($le(low, v) && $lt(v, high));
                     }
 
                     let my_uniform = Uniform::new_inclusive(&low, &high).unwrap();
+                    assert_eq!(my_uniform.min(), low);
+                    assert_eq!(my_uniform.max(), high);
+
                     for _ in 0..1000 {
                         let v: $ty = rng.sample(my_uniform);
                         assert!($le(low, v) && $le(v, high));
@@ -691,8 +746,8 @@ mod tests {
     #[test]
     fn test_uniform_from_std_range() {
         let r = Uniform::try_from(2u32..7).unwrap();
-        assert_eq!(r.0.low, 2);
-        assert_eq!(r.0.range, 5);
+        assert_eq!(r.min(), 2);
+        assert_eq!(r.max(), 6);
     }
 
     #[test]
@@ -705,8 +760,8 @@ mod tests {
     #[test]
     fn test_uniform_from_std_range_inclusive() {
         let r = Uniform::try_from(2u32..=6).unwrap();
-        assert_eq!(r.0.low, 2);
-        assert_eq!(r.0.range, 5);
+        assert_eq!(r.min(), 2);
+        assert_eq!(r.max(), 6);
     }
 
     #[test]
@@ -718,13 +773,11 @@ mod tests {
 
     #[test]
     fn value_stability() {
-        fn test_samples<T: SampleUniform + Copy + Debug + PartialEq + Add<T>>(
-            lb: T,
-            ub: T,
-            ub_excl: T,
-            expected: &[T],
-        ) where
+        fn test_samples<T>(lb: T, ub: T, ub_excl: T, expected: &[T])
+        where
             Uniform<T>: Distribution<T>,
+            T: SampleUniform + Copy + Debug + PartialEq + Add<T>,
+            T::Sampler: UniformSamplerRange,
         {
             let mut rng = crate::test::rng(897);
             let mut buf = [lb; 6];
@@ -734,6 +787,9 @@ mod tests {
             }
 
             let distr = Uniform::new_inclusive(lb, ub).unwrap();
+            assert_eq!(distr.min(), lb);
+            assert_eq!(distr.max(), ub);
+
             for x in &mut buf[3..6] {
                 *x = rng.sample(&distr);
             }
@@ -746,6 +802,9 @@ mod tests {
             }
 
             let distr = Uniform::new(lb, ub_excl).unwrap();
+            assert_eq!(distr.min(), lb);
+            assert_eq!(distr.max(), ub);
+
             for x in &mut buf[3..6] {
                 *x = rng.sample(&distr);
             }
@@ -866,6 +925,9 @@ mod tests {
     fn test_uniform_usize_deserialization() {
         use serde_json;
         let original = UniformUsize::new_inclusive(10, 100).expect("creation");
+        assert_eq!(original.min(), 10);
+        assert_eq!(original.max(), 100);
+
         let serialized = serde_json::to_string(&original).expect("serialization");
         let deserialized: UniformUsize =
             serde_json::from_str(&serialized).expect("deserialization");
@@ -890,7 +952,10 @@ mod tests {
     fn test_uniform_usize_deserialization_64bit() {
         use serde_json;
         let original = UniformUsize::new_inclusive(1, u64::MAX as usize - 1).expect("creation");
+        assert_eq!(original.min(), 1);
+        assert_eq!(original.max(), u64::MAX as usize - 1);
         assert!(original.mode64);
+
         let serialized = serde_json::to_string(&original).expect("serialization");
         let deserialized: UniformUsize =
             serde_json::from_str(&serialized).expect("deserialization");
