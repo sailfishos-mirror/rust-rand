@@ -13,7 +13,11 @@ You may also find the [Upgrade Guide](https://rust-random.github.io/book/update.
 ### Changes
 - Document required output order of fn `partial_shuffle` and apply `#[must_use]` ([#1769])
 
+### Additions
+- Add trait `UniformSamplerRange` and fns `Uniform::{min, max}` ([#1775])
+
 [#1769]: https://github.com/rust-random/rand/pull/1769
+[#1775]: https://github.com/rust-random/rand/pull/1775
 
 ## [0.10.1] — 2026-02-11
 This release includes a fix for a soundness bug; see [#1763].
